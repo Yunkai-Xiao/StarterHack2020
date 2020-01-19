@@ -8,43 +8,42 @@ import {
 } from "react-google-maps";
 
 const Map = props => {
-  console.log(props.markerLocX);
+  console.log(props.markerLocX[0]);
   console.log(props.markerLocY);
+  var totalList = [];
+  for (var i = 0; i < props.markerLocX.length; i++){
+    totalList.push([props.markerLocX[i], props.markerLocY[i]]);
+  }
   // props.markerLoc.map(coordPair => {
   //   console.log(1);});
   // console.log(props.markerLoc);
   return (
     <GoogleMap
       defaultZoom={props.zoom}
-      defaultCenter={{lat:1, lng:1}}
+      defaultCenter={{lat:43.4713714, lng:-80.5438478}}
     >
-    <Marker
-              position={{
-                lat: parseFloat(1),
-                lng: parseFloat(1)
-              }}
-            />
-      {/* {props.markerLoc.map(coordPair => {
+    
+      {totalList.map(coordPair => {
         console.log(1);
         return (
-          <Fragment>
+          <Fragment key={Math.random() * 100000000}>
             <Marker
               position={{
-                lat: parseFloat(1),
-                lng: parseFloat(1)
+                lat: parseFloat(coordPair[0]),
+                lng: parseFloat(coordPair[1])
               }}
             />
             <Circle
               defaultCenter={{
-                lat: parseFloat(1),
-                lng: parseFloat(1)
+                lat: parseFloat(coordPair[0]),
+                lng: parseFloat(coordPair[1])
               }}
-              radius={3000}
+              radius={50}
               options={{strokeColor: "#ff0000"}}
             />
           </Fragment>
         );
-      })} */}
+      })}
     </GoogleMap>
   );
 }

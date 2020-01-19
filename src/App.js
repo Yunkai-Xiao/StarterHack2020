@@ -14,44 +14,54 @@ import 'antd/dist/antd.css';
 // import 'https://www.gstatic.com/firebasejs/7.7.0/firebase-database.js';
 
 class App extends Component {
-  state = {
-    qualifiedPostLocationX : [],
-    qualifiedPostLocationY : [],
-    searchCourse : "",
-    posts : {}
+  constructor(props) {
+    super(props);
+    this.state = {
+      qualifiedPostLocationX : [],
+      qualifiedPostLocationY : [],
+      searchCourse : "CS",
+      posts : {}
+    }
   }
 
   async componentWillMount(){
+    console.log("12");
     if (this.state.searchCourse !== ""){
       var myPosts = null;
       const ref = await firebase.database().ref().child('/Users').on('value', async function(snap){
         myPosts = await snap.val();
       })
-      await this.setState({ posts : myPosts});
+        this.setState({ posts : myPosts, searchCourse: "CS"});
     }
   }
 
   searchCourse = async value => {
-    this.setState({searchCourse : value});
+    this.state.searchCourse = "CS";
+    this.componentWillMount();
+    
   }
 
   render() {
     const qualifiedPostLocationX = [];
     const qualifiedPostLocationY = [];
-    console.log(this.state.posts);
-    console.log(this.state.searchCourse);
-    for (var i = 0; i < Object.keys(this.state.posts).length; ++i){
-          var cur = this.state.posts[Object.keys(this.state.posts)[i]];
+    var myPosts;
+    const ref =  firebase.database().ref().child('/Users').on('value', function(snap){
+      myPosts = snap.val();
+
+    for (var i = 0; i < Object.keys(myPosts).length; ++i){
+          var cur = myPosts[Object.keys(myPosts)[i]];
           var keys = Object.keys(cur);
           for (var j = 0 ; j < keys.length; j++){
             var str = cur[keys[j]];
-            if (typeof str == "string" && str.includes(this.state.searchCourse)){
+            if (typeof str == "string" && str.includes("CS")){
               qualifiedPostLocationX.push(cur['x']);
               qualifiedPostLocationY.push(cur['y']);
             }
           }
     };
-    console.log(qualifiedPostLocationX);
+    console.log(qualifiedPostLocationX);      
+  })
+  console.log(qualifiedPostLocationX);
     return (
       <div className="App">
         <header className="App-header">
@@ -63,7 +73,7 @@ class App extends Component {
           />
           <Map
             center={{ lat: 40.64, lng: -73.96 }}
-            zoom={12}
+            zoom={18}
             markerLocX={qualifiedPostLocationX}
             markerLocY={qualifiedPostLocationY}
             googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrR5fLDg5k8V4lK9XpxIUnRrhzBrcuoPQ"
