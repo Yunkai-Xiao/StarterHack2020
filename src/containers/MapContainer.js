@@ -1,31 +1,30 @@
 import React, { Component } from 'react';
-import GoogleMapReact from 'google-map-react';
+import GoogleMapReact, {Circle} from 'google-map-react';
 import MapAutoComplete from '../components/MapAutoComplete';
 import MapMarker from '../components/MapMarker';
 import PlaceCard from '../components/PlaceCard';
 import ConstraintSlider from '../components/ConstraintSlider';
+//import {Circle} from "react-google-maps";
+
 
 import { Button, Input, Divider, message } from 'antd';
 
 const SG_COOR = { lat: 1.3521, lng: 103.8198 };
 
 class MapsContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      constraints: [{ name: '', time: 0 }],
-      searchResults: [],
-      mapsLoaded: false,
-      markers: [],
-      map: {},
-      mapsApi: {},
-      singaporeLatLng: {},
-      autoCompleteService: {},
-      placesService: {},
-      geoCoderService: {},
-      directionService: {},
-    };
-  }
+  state = {
+    constraints: [{ name: '', time: 0 }],
+    searchResults: [],
+    mapsLoaded: false,
+    markers: [],
+    map: {},
+    mapsApi: {},
+    singaporeLatLng: {},
+    autoCompleteService: {},
+    placesService: {},
+    geoCoderService: {},
+    directionService: {},
+  };
 
   // Update name for constraint with index === key
   updateConstraintName = ((event, key) => {
@@ -198,16 +197,17 @@ class MapsContainer extends Component {
               key: 'AIzaSyBrR5fLDg5k8V4lK9XpxIUnRrhzBrcuoPQ',
               libraries: ['places', 'directions']
             }}
-            defaultZoom={11}
-            defaultCenter={{ lat: SG_COOR.lat, lng: SG_COOR.lng }}
+            defaultZoom={19}
+            defaultCenter={{ lat: 32.0603, lng: 118.7679}}
             yesIWantToUseGoogleMapApiInternals={true}
             onGoogleApiLoaded={({ map, maps }) => this.apiHasLoaded(map, maps)} // "maps" is the mapApi. Bad naming but that's their library.
           >
+          <Circle defaultCenter={{ lat: 32.0603, lng: 118.7679}} radius={10} />
             {/* Pin markers on the Map*/}
             {markers.map((marker, key) => {
               const { name, lat, lng } = marker;
               return (
-                <MapMarker key={key} name={name} lat={1} lng={2} />
+                <Circle defaultCenter={{ lat: 32.0603, lng: 118.7679}} radius={10} />
               );
             })}
           </GoogleMapReact>

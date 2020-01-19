@@ -70,7 +70,8 @@ class App extends Component {
           <LeftSearchBar 
             onSearchClick={this.searchCourse}
           />
-          <MapContainer />
+          <MapContainer markerLocX={this.state.qualifiedPostLocationX}
+                        markerLocY={this.state.qualifiedPostLocationY}/>
         </div>
       </div>
     );
