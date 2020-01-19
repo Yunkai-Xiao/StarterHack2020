@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import MapContainer from './containers/MapContainer';
+import Map from './containers/MapContainer';
 import LeftSearchBar from './components/LeftSearchBar';
+import firebase from './firebase';
 
 // CSS
 import './App.css';
@@ -13,54 +14,44 @@ import 'antd/dist/antd.css';
 // import 'https://www.gstatic.com/firebasejs/7.7.0/firebase-database.js';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      qualifiedPostLocationX : [],
-      qualifiedPostLocationY : []
+  state = {
+    qualifiedPostLocationX : [],
+    qualifiedPostLocationY : [],
+    searchCourse : "",
+    posts : {}
+  }
+
+  async componentWillMount(){
+    if (this.state.searchCourse !== ""){
+      var myPosts = null;
+      const ref = await firebase.database().ref().child('/Users').on('value', async function(snap){
+        myPosts = await snap.val();
+      })
+      await this.setState({ posts : myPosts});
     }
   }
 
   searchCourse = async value => {
-    const firebase = require("firebase/app");
-    require("firebase/database");
-    require("firebase/auth");
-    const firebaseConfig = {
-      apiKey: "AIzaSyBRnpOBfaFHL5NkbtedViT7lGswAgVWJxM",
-      authDomain: "studymate-80d37.firebaseapp.com",
-      databaseURL: "https://studymate-80d37.firebaseio.com",
-      projectId: "studymate-80d37",
-      storageBucket: "studymate-80d37.appspot.com",
-      messagingSenderId: "328318671355",
-      appId: "1:328318671355:web:457a879ae2d0f27b1e935e",
-      measurementId: "G-HRFR7MYWY8"
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    if (value != null){
-      var posts = null;
-      var states = this.state;
-      const ref = firebase.database().ref().child('/Users').on('value', function(snap){
-        posts = snap.val();
-        for (var i = 0; i < Object.keys(posts).length; ++i){
-          var cur = posts[Object.keys(posts)[i]];
+    this.setState({searchCourse : value});
+  }
+
+  render() {
+    const qualifiedPostLocationX = [];
+    const qualifiedPostLocationY = [];
+    console.log(this.state.posts);
+    console.log(this.state.searchCourse);
+    for (var i = 0; i < Object.keys(this.state.posts).length; ++i){
+          var cur = this.state.posts[Object.keys(this.state.posts)[i]];
           var keys = Object.keys(cur);
           for (var j = 0 ; j < keys.length; j++){
             var str = cur[keys[j]];
-            if (typeof str == "string" && str.includes(value)){
-              states.qualifiedPostLocationX.push(cur['x']);
-              states.qualifiedPostLocationY.push(cur['y']);
+            if (typeof str == "string" && str.includes(this.state.searchCourse)){
+              qualifiedPostLocationX.push(cur['x']);
+              qualifiedPostLocationY.push(cur['y']);
             }
           }
-        };
-    })
-    this.state = states;
-    console.log(this.state.qualifiedPostLocationX);
-    console.log(this.state.qualifiedPostLocationY);
-    }
-  };
-
-  render() {
+    };
+    console.log(qualifiedPostLocationX);
     return (
       <div className="App">
         <header className="App-header">
@@ -70,8 +61,16 @@ class App extends Component {
           <LeftSearchBar 
             onSearchClick={this.searchCourse}
           />
-          <MapContainer markerLocX={this.state.qualifiedPostLocationX}
-                        markerLocY={this.state.qualifiedPostLocationY}/>
+          <Map
+            center={{ lat: 40.64, lng: -73.96 }}
+            zoom={12}
+            markerLocX={qualifiedPostLocationX}
+            markerLocY={qualifiedPostLocationY}
+            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrR5fLDg5k8V4lK9XpxIUnRrhzBrcuoPQ"
+            loadingElement={<div style={{ height: '100%'}} />}
+            containerElement={<div style={{ height: '800px' }} />}
+            mapElement={<div style={{ height: '100%' }} />}
+          />
         </div>
       </div>
     );
