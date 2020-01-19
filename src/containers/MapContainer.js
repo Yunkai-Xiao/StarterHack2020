@@ -207,7 +207,7 @@ class MapsContainer extends Component {
             {markers.map((marker, key) => {
               const { name, lat, lng } = marker;
               return (
-                <MapMarker key={key} name={name} lat={lat} lng={lng} />
+                <MapMarker key={key} name={name} lat={1} lng={2} />
               );
             })}
           </GoogleMapReact>
