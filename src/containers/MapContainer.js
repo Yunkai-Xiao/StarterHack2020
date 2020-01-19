@@ -8,15 +8,11 @@ import {
 } from "react-google-maps";
 
 const Map = props => {
-  console.log(props.markerLocX[0]);
-  console.log(props.markerLocY);
+  
   var totalList = [];
   for (var i = 0; i < props.markerLocX.length; i++){
     totalList.push([props.markerLocX[i], props.markerLocY[i]]);
   }
-  // props.markerLoc.map(coordPair => {
-  //   console.log(1);});
-  // console.log(props.markerLoc);
   return (
     <GoogleMap
       defaultZoom={props.zoom}
@@ -24,7 +20,6 @@ const Map = props => {
     >
     
       {totalList.map(coordPair => {
-        console.log(1);
         return (
           <Fragment key={Math.random() * 100000000}>
             <Marker

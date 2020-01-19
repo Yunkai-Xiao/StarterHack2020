@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import Map from './containers/MapContainer';
 import LeftSearchBar from './components/LeftSearchBar';
 import firebase from './firebase';
+import SearchForm from './components/SearchForm';
 
 // CSS
 import './App.css';
@@ -20,7 +20,12 @@ class App extends Component {
       qualifiedPostLocationX : [],
       qualifiedPostLocationY : [],
       searchCourse : "CS",
-      posts : {}
+      posts : {},
+      postIsOpen : true,
+      fieldsOccupied: false,
+      isEditingPost: true, 
+      postLng: 15,
+      postLat: 15
     }
   }
 
@@ -41,6 +46,41 @@ class App extends Component {
     
   }
 
+  cancelReviewHandler = () => {
+    this.setState({ 
+      "postIsOpen": false,
+      "fieldsOccupied": false
+    });
+  }
+
+  latChangeHandler = async (value) => {
+    await this.setState({
+      postLng: value,
+      postLat: this.state.postLng
+    });
+  }
+
+  lngChangeHandler = async (value) => {
+    await this.setState({
+      postLng: value,
+      postLat: this.state.postLat
+    });
+  }
+
+  acceptReviewHandler = async () => {
+    firebase.database().ref('/Users/xyk').set({
+      username: 'shawnhan',
+      program: 'CS',
+      review: 'satisfactory',
+      x: this.state.postLat,
+      y: this.state.postLng
+    });
+
+    await this.setState({ 
+      "postIsOpen": false,
+      "fieldsOccupied": false
+    })
+  }
   render() {
     const qualifiedPostLocationX = [];
     const qualifiedPostLocationY = [];
@@ -58,10 +98,8 @@ class App extends Component {
               qualifiedPostLocationY.push(cur['y']);
             }
           }
-    };
-    console.log(qualifiedPostLocationX);      
+    };    
   })
-  console.log(qualifiedPostLocationX);
     return (
       <div className="App">
         <header className="App-header">
@@ -71,6 +109,13 @@ class App extends Component {
           <LeftSearchBar 
             onSearchClick={this.searchCourse}
           />
+          <SearchForm
+          cancelReviewHandler={this.cancelReviewHandler}
+          acceptReviewHandler={this.acceptReviewHandler}
+          lngChangeHandler = {this.lngChangeHandler}
+          latChangeHandler = {this.latChangeHandler}
+          postEditing={this.state.postIsOpen}        
+        />
           <Map
             center={{ lat: 40.64, lng: -73.96 }}
             zoom={18}
